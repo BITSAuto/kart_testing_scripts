@@ -1,0 +1,82 @@
+# Kart test bench configuration.
+#
+# Values marked GUESS are placeholders until a test measures them. Measured values are
+# written to data/calibration/*.json and take precedence over the guesses here.
+
+[serial]
+# Drive-by-wire ESP32 (same settings as Drive_By_Wire/ver1.py)
+port = "/dev/ttyUSB1"
+baud = 9600
+exclusive = true          # refuse to open the port if another program has it (e.g. ver1.py)
+line_ending = ""          # bytes appended after '#'; ver1.py sends nothing
+# Some firmwares only print after receiving a frame. If p00_serial_probe shows that, set this
+# (e.g. 0.1) and the last frame is re-sent this often so encoder data keeps coming.
+poll_interval_s = 0.0
+
+[frame]
+# *A{a}B{throttle}C{c}D{steering}E{left_ind}F{horn}G{light}H{right_ind}I{brake}J{reverse}#
+# A and C are unused by ver1.py; they are always sent with these values.
+a = 0
+c = 0
+
+[steering]
+stop = 50                  # D value that stops the steering motor
+left = 30                  # GUESS: D value for "turn left" (p02 finds the real one)
+right = 70                 # GUESS: D value for "turn right"
+min_command_gap_s = 0.25   # normal spacing between steering commands (the kart needs ~0.2 s)
+assumed_stop_latency_s = 0.25  # GUESS until p05 measures it
+stop_retry_s = 0.5         # resend STOP if the encoder is still moving this long after a STOP
+move_tolerance_deg = 1.0   # target accuracy when positioning the wheels between trials
+move_tolerance_ticks = 10  # same, used before the tick->degree calibration exists
+hold_brake_in_steering_tests = true   # brake on (I=1) while steering tests run at standstill
+
+[encoder]
+port = ""                  # "" = encoder lines come in on the drive-by-wire port
+baud = 115200              # only used when port is set
+# Regex that pulls the tick count out of a serial line (first capture group).
+# GUESS: p00_serial_probe shows the real lines and suggests a regex.
+regex = '(?i)enc\w*\s*[:=,]?\s*(-?\d+)'
+noise_ticks = 1            # changes this small count as "not moving"
+stale_s = 0.5              # no encoder sample for this long while steering = fault, stop
+
+[throttle]
+prearm = 50                # ver1.py always sends B50 before any other throttle value
+max = 100
+
+[safety]
+deadman = true             # dashboard: SPACE must be held while anything moves
+deadman_initial_s = 0.9    # longest wait for the first key auto-repeat
+deadman_repeat_s = 0.35    # longest gap between auto-repeats once the key is held
+abort_brake = true         # emergency stop also sets the brake (I=1) if the kart may be rolling
+soft_limit_margin_deg = 1.5   # stay this far inside the measured locks
+uncalibrated_pulse_s = 0.6    # longest automatic steering movement before the range is measured
+max_move_s = 6.0              # longest single steering movement after that, and for jogging
+stall_s = 0.4                 # steering on but encoder still this long = stalled (at a lock): stop
+max_speed_kmh = 18.0          # overspeed -> throttle 0 + brake
+max_throttle_run_s = 25.0     # longest continuous throttle in any test
+jog_release_s = 0.15          # jog keys: stop this long after the last key repeat
+jog_initial_s = 0.25          # a single tap steers this long (one small step)
+
+[vectornav]
+# none | serial | ros2
+source = "none"
+port = "/dev/ttyUSB0"      # serial: VectorNav ASCII async output ($VNINS, $VNYMR)
+baud = 115200
+stale_s = 1.0
+
+[vectornav.ros2]
+# Topic names follow the common vectornav ROS 2 driver; change them to match yours.
+imu_topic = "/vectornav/imu"                 # sensor_msgs/Imu (yaw rate)
+fix_topic = "/vectornav/gnss"                # sensor_msgs/NavSatFix (position)
+velocity_topic = "/vectornav/velocity_body"  # geometry_msgs/TwistWithCovarianceStamped
+odom_topic = ""                              # nav_msgs/Odometry, if you have one (overrides the above)
+
+[vehicle]
+# For the circle test and the digital twin. Fill these in when measured.
+wheelbase_m = 0.0
+front_track_m = 0.0
+rear_track_m = 0.0
+wheel_radius_m = 0.0
+
+[data]
+root = "data"

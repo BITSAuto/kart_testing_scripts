@@ -1,0 +1,70 @@
+# Config for dry runs against sim/fake_kart.py. Same keys as ../config.toml.
+# Data goes to sim/data so dry runs never mix with real kart data.
+
+[serial]
+port = "sim/run/dbw"
+baud = 9600
+exclusive = true
+line_ending = ""
+poll_interval_s = 0.0
+
+[frame]
+a = 0
+c = 0
+
+[steering]
+stop = 50
+left = 30
+right = 70
+min_command_gap_s = 0.25
+assumed_stop_latency_s = 0.25
+stop_retry_s = 0.5
+move_tolerance_deg = 1.0
+move_tolerance_ticks = 10
+hold_brake_in_steering_tests = true
+
+[encoder]
+port = ""
+baud = 115200
+regex = '(?i)enc\w*\s*[:=,]?\s*(-?\d+)'
+noise_ticks = 1
+stale_s = 0.5
+
+[throttle]
+prearm = 50
+max = 100
+
+[safety]
+deadman = true
+deadman_initial_s = 0.9
+deadman_repeat_s = 0.35
+abort_brake = true
+soft_limit_margin_deg = 1.5
+uncalibrated_pulse_s = 0.6
+max_move_s = 6.0
+stall_s = 0.4
+max_speed_kmh = 18.0
+max_throttle_run_s = 25.0
+jog_release_s = 0.15
+jog_initial_s = 0.25          # a single tap steers this long (one small step)
+
+[vectornav]
+source = "serial"
+port = "sim/run/vn"
+baud = 115200
+stale_s = 1.0
+
+[vectornav.ros2]
+imu_topic = "/vectornav/imu"
+fix_topic = "/vectornav/gnss"
+velocity_topic = "/vectornav/velocity_body"
+odom_topic = ""
+
+[vehicle]
+wheelbase_m = 1.6
+front_track_m = 0.0
+rear_track_m = 0.0
+wheel_radius_m = 0.0
+
+[data]
+root = "sim/data"
