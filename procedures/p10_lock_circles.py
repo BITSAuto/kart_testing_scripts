@@ -34,7 +34,7 @@ def add_args(ap):
 def body(ctx):
     a, link, steer, cal, rec, vn = ctx.args, ctx.link, ctx.steer, ctx.cal, ctx.rec, ctx.vn
     lo, hi = cal.soft_limits()
-    L = ctx.cfg.get("vehicle", {}).get("wheelbase_m") or 0
+    L = (cal.get("vehicle") or {}).get("wheelbase_m") or ctx.cfg.get("vehicle", {}).get("wheelbase_m") or 0
     rec.table("circles", ["side", "pos", "table_deg", "radius_fit_m", "fit_rms_m", "radius_v_over_r_m",
                           "speed_kmh", "effective_deg"])
     rec.table("tracks", ["side", "t", "x_m", "y_m", "speed_kmh", "yaw_deg", "yaw_rate"])

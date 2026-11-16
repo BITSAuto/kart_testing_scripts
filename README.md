@@ -45,9 +45,12 @@ Every procedure also runs without the dashboard
 | p10 | full-lock circles (VectorNav) | p03 |
 | p11 | random sequence for model fitting | p03 |
 | p12 | manual keyboard drive, recorded | p02 |
+| p13 | step steer at speed: yaw-rate delay, rise, measured vs kinematic curvature (VectorNav) | p03, p09 |
+| p14 | vehicle measurements form: geometry, mass per axle, sensor mounts (typed in) | |
 
 Do p02 to p08 parked (brake held automatically) or with the front wheels lifted, before driving.
 Results: `data/` (see `data/README.md`). Settings and limits: `config.toml`.
+Trouble in the field: `.venv/bin/python tools/diagnose.py --listen 3`, and `CLAUDE.md` (debugging guide, also for an AI assistant).
 
 ## Before the first real run
 

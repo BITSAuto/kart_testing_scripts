@@ -26,6 +26,8 @@ CALIBRATIONS = {
     "repeatability": "p08: centre repeatability / encoder drift",
     "longitudinal": "p09: throttle -> speed, acceleration and braking",
     "circles": "p10: turning radius at full lock",
+    "step_steer": "p13: yaw-rate response to steering steps at speed",
+    "vehicle": "p14: geometry, mass, sensor mounts (typed in)",
 }
 
 

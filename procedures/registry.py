@@ -57,6 +57,15 @@ PROCEDURES = [
          motion=True, needs=["steer_map"], args="",
          desc="You drive from the keyboard (A/D steer, W/S throttle on/off, B brake, ENTER ends) "
               "while everything is recorded."),
+    dict(id="p13", script="p13_step_steer.py", title="Step steer at speed",
+         motion=True, needs=["steer_map", "zero", "range"], args="--fractions 0.3,0.6", vn=True,
+         desc="Drives straight, steps the steering to 30/60 % lock each way and back. Yaw-rate "
+              "delay, rise time and measured vs kinematic curvature: the tyre/understeer data "
+              "the twin needs. Throttle defaults to the 15 km/h value from p09."),
+    dict(id="p14", script="p14_vehicle_measurements.py", title="Vehicle measurements form",
+         motion=False, needs=[], args="",
+         desc="Type in wheelbase, tracks, tyres, mass (per axle), CoM height and sensor "
+              "positions/angles. Saved to calibration/vehicle.json; rerun to fill gaps."),
 ]
 
 BY_ID = {p["id"]: p for p in PROCEDURES}

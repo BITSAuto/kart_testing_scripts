@@ -108,7 +108,7 @@ def body(ctx):
                   f"spread {spread} ticks over 1 s with steering stopped")
 
     # ------------------------------------------------------------ calibration
-    optional = {"slew_rolling"}
+    optional = {"slew_rolling", "step_steer"}
     have = [n for n in CALIBRATIONS if cal.has(n)]
     missing = [n for n in CALIBRATIONS if not cal.has(n) and n not in optional]
     check("calibration files", "ok" if not missing else "warn",
