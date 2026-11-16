@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Kart test bench setup for the test laptop (Ubuntu 22.04/24.04).
+# Kart test bench setup for the test laptop (Ubuntu 22.04 + Humble / 24.04 + Jazzy).
+# Python: python3 (3.10 on 22.04, 3.12 on 24.04); override with PYTHON=python3.x
 #
 #   ./setup.sh                 apt packages, venv, dialout, brltty/ModemManager fixes,
 #                              generic udev rules, then the quick self-test
 #   ./setup.sh --udev          also name the plugged-in ESP32 / VectorNav (/dev/kart_dbw,
 #                              /dev/kart_vectornav) and point config.toml at them
 #   ./setup.sh --offline       install Python packages from bundle/wheels (no internet)
-#   ./setup.sh --make-bundle [--platform manylinux2014_x86_64] [--py 3.12]
+#   ./setup.sh --make-bundle [--platform manylinux2014_x86_64] [--py 3.10]
 #                              (on a machine WITH internet) download wheels for the laptop
 #   ./setup.sh --remove-brltty      purge brltty instead of just masking its udev rule
 #   ./setup.sh --disable-modemmanager   stop ModemManager entirely (default: only ignore our ports)
@@ -18,7 +19,7 @@ VENV="${VENV_DIR:-$HERE/.venv}"
 BUNDLE="$HERE/bundle/wheels"
 PY=${PYTHON:-python3}
 APT=1 SYSTEM=1 UDEV=0 OFFLINE=0 MAKE_BUNDLE=0 REMOVE_BRLTTY=0 DISABLE_MM=0
-SELFTEST=1 SELFTEST_ONLY=0 FULL="" DRY=0 YES=0 PLATFORM=manylinux2014_x86_64 PYVER=3.12
+SELFTEST=1 SELFTEST_ONLY=0 FULL="" DRY=0 YES=0 PLATFORM=manylinux2014_x86_64 PYVER=3.10
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --no-apt) APT=0 ;; --no-system) SYSTEM=0; APT=0 ;; --udev) UDEV=1 ;;
@@ -42,7 +43,7 @@ if [[ $MAKE_BUNDLE == 1 ]]; then
   say "downloading wheels for $PLATFORM / Python $PYVER into $BUNDLE"
   mkdir -p "$BUNDLE"
   "$PY" -m pip download --only-binary=:all: --platform "$PLATFORM" --python-version "$PYVER" \
-      --implementation cp -d "$BUNDLE" -r "$HERE/requirements.txt" pip
+      --implementation cp -d "$BUNDLE" -r "$HERE/requirements.txt" pip tomli
   (cd "$BUNDLE" && sha256sum *.whl > SHA256SUMS && echo "$PLATFORM py$PYVER $(date -I)" > TARGET)
   say "done: copy the whole kart_testing_modules folder to the laptop and run ./setup.sh --offline"
   exit 0
@@ -50,8 +51,9 @@ fi
 
 if [[ $SELFTEST_ONLY == 1 ]]; then exec "$VENV/bin/python" "$HERE/tools/self_test.py" $FULL; fi
 
-"$PY" -c 'import sys; assert sys.version_info >= (3, 11)' 2>/dev/null \
-  || { echo "need Python 3.11+ (Ubuntu 24.04 has 3.12)"; exit 1; }
+"$PY" -c 'import sys; assert sys.version_info >= (3, 10)' 2>/dev/null \
+  || { echo "need Python 3.10+ ($PY is $("$PY" -V 2>&1)); set PYTHON=python3.10 or newer"; exit 1; }
+say "using $("$PY" -V) ($PY); keep it the same as ROS 2 so rclpy stays importable"
 
 # ------------------------------------------------------------------------ apt
 if [[ $APT == 1 ]]; then

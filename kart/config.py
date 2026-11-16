@@ -2,7 +2,10 @@
 import json
 import shutil
 import time
-import tomllib
+try:
+    import tomllib                  # Python 3.11+
+except ImportError:                 # 3.10 (Ubuntu 22.04 / ROS 2 Humble)
+    import tomli as tomllib
 from pathlib import Path
 
 import numpy as np

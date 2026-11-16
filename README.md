@@ -12,7 +12,7 @@ controller. Talks to the ESP32 with the `Drive_By_Wire/ver1.py` frame format
 ./setup.sh --udev       # with the kart plugged in: names /dev/kart_dbw and /dev/kart_vectornav
 ```
 No internet on the laptop: on a machine with internet run `./setup.sh --make-bundle`
-(x86_64 / Python 3.12 by default; `--platform`, `--py` to change), copy the folder, then
+(x86_64 / Python 3.10 = Ubuntu 22.04 + Humble by default; `--py 3.12` for 24.04), copy the folder, then
 `./setup.sh --offline`. Log out and back in after the first setup (dialout).
 `./setup.sh --self-test [--full]` re-checks everything against a fake kart.
 

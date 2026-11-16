@@ -48,7 +48,7 @@ def report(section, name, status, detail=""):
 def check_environment():
     print("\n[1] environment")
     v = sys.version_info
-    report("env", "python", "PASS" if v >= (3, 11) else "FAIL", sys.version.split()[0])
+    report("env", "python", "PASS" if v >= (3, 10) else "FAIL", sys.version.split()[0])
     for mod in ("serial", "numpy", "textual"):
         try:
             m = __import__(mod)
